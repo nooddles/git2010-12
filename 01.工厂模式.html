@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工厂模式</title>
+</head>
+
+<body>
+    <script>
+        //工厂模式
+        // function factory(e, c, s) {
+        //     var car = {}
+        //     car.engine = e
+        //     car.color = c
+        //     car.drive = function () {
+        //         console.log('最高时速' + s);
+        //     }
+        //     return car
+        // }
+        // var car1 = factory('v8引擎', 'red', '360km/h')
+        // var car2 = factory('v4引擎', 'blue', '220km/h')
+
+        //根据业务需求，从众多类当中创建一个对象
+
+        var factory = (function () {
+            var cars = {
+                carA: function () {
+                    this.engine = 'v8引擎'
+                    this.color = 'green'
+                    this.drive = function () {
+                        console.log('最高时速380Km/h');
+                    }
+                },
+                carB: function () {
+                    this.engine = 'v6引擎'
+                    this.color = 'blue'
+                    this.drive = function () {
+                        console.log('最高时速300km/h');
+                    }
+                },
+                carC: function () {
+                    this.engine = 'v6引擎'
+                    this.color = 'blue'
+                    this.drive = function () {
+                        console.log('最高时速300km/h');
+                    }
+                }
+            }
+            return function (config) {
+                return new cars[config]()
+            }
+        })()
+
+        var car1 = factory('carA')
+        var car3 = factory('carC')
+        console.log(car1.engine);
+        console.log(car3.engine);
+    </script>
+</body>
+
+</html>

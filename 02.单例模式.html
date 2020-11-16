@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单例模式</title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .login {
+            width: 300px;
+            height: 120px;
+            border: 1px solid #333;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -60px 0 0 -150px;
+            z-index: 20;
+            background-color: #ffffff;
+        }
+
+        .mask {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            position: absolute;
+            left: 0;
+            top: 0;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="btn">登录</button>
+    <script>
+        //面试题
+        function Fun() {
+            // 在函数中添加代码，使下面的运行结果成立
+            if (Fun.instance) {
+                return Fun.instance
+            }
+            this.attr = 'hello world'
+            Fun.instance = this
+            // return this
+        }
+        // var obj1 = new Fun();
+        // var obj2 = new Fun();
+        // console.log(obj1 === obj2); //true
+        // console.log(obj1.attr); // 'hello world'
+
+        // console.log({} === {})// false
+
+        //单例登录框
+        // var singleLogin = (function () {
+        //     var instance  // 保存第一次生成的实例对象
+        //     var CreateLogin = function () {
+        //         if (instance) {
+        //             return instance
+        //         }
+        //         instance = this
+        //         this.init()
+        //         console.log('创建一个登录框');
+        //     }
+        //     CreateLogin.prototype.init = function () {
+        //         var div = document.createElement('div')
+        //         div.className = 'login'
+        //         div.innerText = '登录框'
+        //         document.body.appendChild(div)
+        //     }
+
+        //     return function () {
+        //         return new CreateLogin()
+        //     }
+        // })()
+        // console.log(singleLogin() === singleLogin());
+
+        //管理单例逻辑
+        var getSingle = function (fn) {
+            var instance
+            return function () {
+                //  if(instance){
+                //      return instance
+                //  }
+                //  instance = new fn()
+                //  return instance
+                return instance || (instance = new fn())
+            }
+        }
+
+        //创建登录框的构造函数
+        var CreateLogin = function () {
+            var div = document.createElement('div')
+            div.className = 'login'
+            div.innerText = '登录框'
+            document.body.appendChild(div)
+            return div
+        }
+
+        var CreateMask = function () {
+            var div = document.createElement('div')
+            div.className = 'mask'
+            document.body.appendChild(div)
+            return div
+        }
+        var singleLogin = getSingle(CreateLogin)
+        var singMask = getSingle(CreateMask)
+
+        var btn = document.querySelector('.btn')
+        btn.onclick = function(){
+            // CreateMask()不是单例
+            // CreateLogin()不是单例
+            singMask()
+            singleLogin()
+        }
+    </script>
+</body>
+
+</html>

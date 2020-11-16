@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代理模式</title>
+</head>
+<body>
+    <div class="box"></div>
+
+    <script>
+        var Gift = function(name,price){
+            this.name = name
+            this.price = price
+        }
+
+        var boy = {
+            sendGift: function(target){
+                var gift = new Gift('house','200000')
+                target.receiveGift(gift)
+            }
+        }
+        var guimi = {
+            receiveGift: function(gift){
+                if(gift.price > 1000){
+                    girl.receiveGift(gift)
+                }
+            }
+        }
+
+        var girl = {
+            receiveGift: function(gift){
+                console.log('收到礼物： ' + gift.name);
+            }
+        }
+        // boy.sendGift(guimi)
+
+        // var loadImg = (function (){
+        //     var showImg = new Image()
+        //     var loadImg = new Image()
+        //     loadImg.onload = function(){
+        //         showImg.src = this.src
+        //     }
+        //     return{
+        //         setSrc: function (dom,src){
+        //             loadImg.src = src
+        //             showImg.src = 'images/loading.gif'
+        //             dom.appendChild(showImg)
+        //         }
+        //     }
+        // })()
+         var box = document.querySelector('.box')
+        // loadImg.setSrc(box,'http://pic39.photophoto.cn/20160411/1155116845138548_b.jpg')
+
+        //代理实现图片加载
+        var showModule = (function (){//本体对象
+            var showImg = new Image()
+            return {
+                setSrc: function (dom,src){
+                    showImg.src = src
+                    dom.appendChild(showImg)
+                }
+            }
+        })()
+        showModule.setSrc(box,'http://pic39.photophoto.cn/20160411/1155116845138548_b.jpg')
+
+        var proxyModule = (function (){//代理对象
+            var loadImg = new Image()
+            var showDom
+            loadImg.onload = function (){
+                showModule.setSrc(showDom,this.src)
+            }
+            return {
+                setSrc: function (dom,src){
+                    showDom = dom
+                    loadImg.src = src
+                    showModule.setSrc(dom,'images/loading.gif')
+                }
+            }
+        })()
+        proxyModule.setSrc(box,'http://pic39.photophoto.cn/20160411/1155116845138548_b.jpg')
+    </script>
+</body>
+</html>

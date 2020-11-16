@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布订阅</title>
+</head>
+
+<body>
+    <button class="btn1">关注户型A</button>
+    <button class="btn2">关注户型B</button>
+
+    <button class="btn4">发布户型A消息</button>
+    <button class="btn5">发布户型B消息</button>
+
+    <script>
+        var Observe = {
+            cacheList: {},//缓存列表消息类型，用户的回调函数）
+            // {
+            //   'houseTypeA': [fn1,fn2,fn3],
+            //   'houseTypeB': [fn1,fn2,fn3,fn4],
+            //   'houseTypeC': [fn1],
+            // }
+            // 订阅
+            subscribe: function(type,callback){
+                //判断缓存列表中是否有type属性
+                if(!this.cacheList[type]){
+                    this.cacheList[type] = []
+                }
+                //把策略的回调函数添加到对应的消息列表中
+                this.cacheList[type].push(callback)
+            },
+            //发布
+            publish: function (type,data){
+                //判断缓存列表中是否有type属性
+                if(!this.cacheList[type]){
+                  return//没有此类消息，不发布
+                }
+                //取出对应消息类型的所有回调函数执行并传入数据
+                this.cacheList[type].forEach(function (cb){
+                    cb(data)
+                })
+            },
+            //取消订阅
+            unsubscribe: function (type,callback){
+                if(!type){
+                    this.cacheList = {}
+
+                } else if(type || !callback){
+                    //只传type类型,删除cacheList的type属性
+                    delete this.cacheList[type]
+                } else{
+                    //有两个参数，删除指定消息类型的某个回调函数
+                    this.cacheList[type].forEach(function(cb,index){
+                        if(cb === callback){
+                            this.cacheListp[type].splice(indexed,1)
+                        }
+                    })
+                }
+            }
+        }
+
+        var btn1 = document.querySelector('.btn1')
+        var btn2 = document.querySelector('.btn2')
+        var btn4 = document.querySelector('.btn4')
+        var btn5 = document.querySelector('.btn5')
+    btn1.onclick = function(){
+        Observe.subscribe('houseTypeA',function(data){
+            console.log(data);
+        })
+        console.log('已关注户型A');
+    }
+    btn4.onclick = function(){
+        //发布户型A信息
+        Observe.publish('houseTypeA','亲，您关注的户型A将于2020年11月14日盛大开盘，户型A89平，单价：77800/平')
+        console.log('发布户型A的消息')
+    }
+    </script>
+</body>
+
+</html>

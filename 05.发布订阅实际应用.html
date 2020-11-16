@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var Observe = {
+            cacheList: {}, // 缓存列表（消息类型，用户的回调函数）
+            // {
+            //   'houseTypeA': [fn1,fn2,fn3],
+            //   'houseTypeB': [fn1,fn2,fn3,fn4],
+            //   'houseTypeC': [fn1],
+            // }
+            // 订阅
+            subscribe: function (type, callback) {
+                // 判断缓存列表中是否有type属性
+                if (!this.cacheList[type]) {
+                    this.cacheList[type] = []
+                }
+                // 把订阅的回调函数添加到对应的消息列表中
+                this.cacheList[type].push(callback)
+            },
+            // 发布
+            publish: function (type, data) {
+                // 判断缓存列表中是否有type属性
+                if (!this.cacheList[type]) {
+                    return // 没有此类消息，不发布
+                }
+                // 取出对应消息类型的所有回调函数执行并传入数据
+                this.cacheList[type].forEach(function (cb) {
+                    cb(data)
+                })
+            },
+            // 取消订阅
+            unsubscribe: function (type, callback) {
+                if (!type) {
+                    // 没有传参调用，取消所有订阅
+                    this.cacheList = {}
+                } else if (type && !callback) {
+                    // 只传type类型，删除cacheList的type属性
+                    delete this.cacheList[type]
+                } else {
+                    // 有两个参数，删除指定消息类型的某个回调函数
+                    this.cacheList[type].forEach(function (cb, index) {
+                        if (cb === callback) {
+                            this.cacheList[type].splice(index, 1)
+                        }
+                    })
+                }
+            }
+        }
+
+            //登录模块
+            (function () {
+                $.ajax({
+                    type: 'post',
+                    url: 'https://www.baidu.com/',
+                    data: 'user=xiaocuo&pass=123456',
+                    dataType: 'json',
+                    success: function (data) {
+                        header.setUserInfo(data);//设置头部头像
+                        nav.setAdress(data.avatar);//设置导航头像
+                        address.refresh();//刷新收货地址列表
+
+
+
+
+                        //发布登陆成功的信息
+                        Observe.publish('loginSuccess', data)
+                    }
+                })
+            })()
+
+        //头部模块
+        var header = (function () {
+            //订阅成功消息
+            Observe.subscribe('loginSuccess', function (data) {
+                setUserInfo(data)
+            })
+            var setUserInfo = function (data) {
+                console.log(data.touxiang);
+                console.log(data.vip);
+            }
+            return {
+                setUserInfo: setUserInfo
+            }
+        })()
+        //其他模块
+        var other = (function () {
+            // 订阅登录成功消息
+            Observe.subscribe('loginSuccess', function (data) {
+                setAdress(data)
+            })
+            var setAdress = function (data) {
+                console.log(data.address)
+                console.log(data.list)
+            }
+            return {
+                setUserInfo: setUserInfo
+            }
+        })()
+    </script>
+</body>
+
+</html>
